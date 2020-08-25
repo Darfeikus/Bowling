@@ -1,33 +1,40 @@
 defmodule Bowling do
+
   def score([]), do: 0
 
-  # def score([ [first | [second | third] ] | rest ]) when first == 10 do
-  #   if second do
-  #     first + second + hd(third) + score(rest)
-  #   else
-  #     if hd(hd(rest)) != 10 do
-  #       first + hd(hd(rest)) + hd(tl(hd(rest))) + score(rest)
-  #     else
-  #       [a|b] = rest
-  #       if b == [] do
-  #         first + hd(a) + hd(tl(a)) + score(rest)
-  #       else
-  #         first + hd(a) + hd(hd(b)) + score(rest)
-  #       end
-  #     end
-  #   end
-  # end
+  def score([[a,b]|rest]) when a + b == 10, do: a + b + hd(hd(rest)) + score(rest)
 
-  # def score([[first | [second | third]] | rest]) when first + second == 10 do
-  #   if third != [] do
-  #     first + second + third + score(rest)
-  #   else
-  #     first + second + hd(hd(rest)) + score(rest)
-  #   end
-  # end
+  #strike last frame
 
-  def score([[first | [second | _third]] | rest]) do
-    first + second + score(rest)
+  def score([[10,b,c]]), do: 10 + b + c
+
+  #strike second to last frame
+
+  def score([[a,_b]|[[c,d,e]|rest]]) when a == 10 and c == 10 do
+    a + c + d + score([[c,d,e]]++rest)
   end
 
+  #strike before second to last frame
+
+  def score([[a,_b]|[[c,d]|[[e,f,g]|rest]]]) when a == 10 and c == 10 do
+    a + c + e + score([[c,d]]++[[e,f,g]]++rest)
+  end
+
+  #strike followed by strike
+
+  def score([[a,_b]|[[c,d]|[[e,f]|rest]]]) when a == 10 and c == 10 do
+    a + c + e + score([[c,d]]++[[e,f]]++rest)
+  end
+
+  #strike
+
+  def score([[a,_b]|[[c,d]|rest]]) when a == 10 do
+    a + c + d + score([[c,d]]++rest)
+  end
+
+  #score
+
+  def score([[a,b]|rest]), do: a + b + score(rest)
+
+  def score([[a,b,_c]]), do: a + b
 end
